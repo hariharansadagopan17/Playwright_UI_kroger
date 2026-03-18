@@ -1,8 +1,17 @@
 import { test, expect } from '@playwright/test';
+import { testConfig } from '../src/config';
 
 test.setTimeout(120000);
 
 test('Normal login flow', async ({ page }) => {
+
+  // ✅ Attach proxy auth header to bypass ERR_INVALID_AUTH_CREDENTIALS
+  await page.context().setExtraHTTPHeaders({
+    'Proxy-Authorization': 'Basic ' + Buffer.from(
+      `${testConfig.proxy.username}:${testConfig.proxy.password}`
+    ).toString('base64'),
+  });
+
   // Navigate to auth page
   await page.goto('https://krogs-auth.sce.manh.com/auth/realms/maactive/protocol/openid-connect/auth?scope=openid&client_id=zuulserver.1.0.0&redirect_uri=https://krogs.sce.manh.com/login&response_type=code&state=j3aGT1');
 

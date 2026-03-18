@@ -10,11 +10,19 @@ let loginPage: LoginPage;
 let warehousePage: WarehousePage;
 
 Before(async function () {
-  browser = await chromium.launch({ headless: false });
+  // ✅ Proxy passed here suppresses the popup for Cucumber BDD tests
+  browser = await chromium.launch({
+    headless: false,
+    proxy: {
+      server: testConfig.proxy.server,
+      username: testConfig.proxy.username,
+      password: testConfig.proxy.password,
+    },
+  });
   page = await browser.newPage();
   loginPage = new LoginPage(page);
   warehousePage = new WarehousePage(page);
-  console.log('Browser launched and pages initialized');
+  console.log('Browser launched with proxy config');
 });
 
 After(async function () {
